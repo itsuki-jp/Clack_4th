@@ -1,0 +1,14 @@
+#tableArea{
+    width: 50%;
+    margin-right: auto;
+    margin-left: auto;
+}
+table,th,td{
+    width:100%;
+    border-collapse: collapse;
+    border: solid 2px grey;
+}
+th,tr,td{
+    width: 50%;
+    padding: 10px;
+}
