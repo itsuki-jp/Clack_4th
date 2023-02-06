@@ -13,7 +13,7 @@ th,tr,td{
     padding: 10px;
 }
 
-#diceArea{
+#diceArea, #inputArea{
     margin-top: 30px;
     text-align: center;
 }

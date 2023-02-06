@@ -1,24 +1,37 @@
-const main = document.getElementById("main");
+const tableArea = document.getElementById("tableArea");
+const diceArea = document.getElementById("diceArea");
 
-const tableArea = document.createElement("div");
-const diceArea = document.createElement("div");
+const minDie = 1;
+const maxDie = 6;
+const diceNum = 5;
+const maxRoll = 3;
 
 function countNum(num, arr) {
   let res = 0; // numがarrに何個あるか
-  let continuous = 0; // numが最大何個連続してるか
-  let continuousMax = 0;
   for (let i = 0; i < arr.length; i++) {
-    if (arr[i] !== num) {
-      continuousMax = continuousMax > continuous ? continuousMax : continuous;
-      continuous = 0;
-    } else {
-      res += 1;
-      continuous++;
+    if (arr[i] === num) {
+      res++;
     }
   }
-  continuousMax = continuousMax > continuous ? continuousMax : continuous;
-  return [res, continuousMax];
+  return res;
 }
+
+function countContinuous(arr) {
+  let res = 0;
+  const setArr = new Set(arr);
+  for (let i = minDie; i <= maxDie; i++) {
+    let continuousTemp = 0;
+    for (let j = 0; j < diceNum; j++) {
+      if (!setArr.has(i + j)) {
+        break;
+      }
+      continuousTemp++;
+    }
+    res = res > continuousTemp ? res : continuousTemp;
+  }
+  return res;
+}
+
 const nameAndScore = [
   { name: "Aces", param: 1 },
   { name: "Twos", param: 2 },
@@ -32,5 +45,33 @@ const nameAndScore = [
   { name: "Large Straight" },
   { name: "YAHTZEE" },
   { name: "Chance" },
-  
 ];
+
+const diceFixed = [false, false, false, false, false];
+function setUpDice() {
+  for (let i = 0; i < diceArea.childElementCount; i++) {
+    diceArea.children[i].onclick = () => {
+      if (diceFixed[i]) {
+        diceArea.children[i].style.opacity = 1;
+      } else {
+        console.log("aaa")
+        diceArea.children[i].style.opacity = 0.5;
+      }
+      diceFixed[i] = !diceFixed[i];
+    };
+  }
+}
+function rollDice() {
+  for (let i = 0; i < diceNum; i++) {
+    if (diceFixed[i]) continue;
+    const randNum = Math.floor(Math.random() * (maxDie - minDie) + 1);
+    diceArea.children[i].src = `./img/dice_${randNum}.png`;
+  }
+}
+
+function main() {
+  setUpDice();
+  document.getElementById("rollBtn").onclick = rollDice;
+}
+
+main();
