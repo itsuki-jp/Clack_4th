@@ -9,21 +9,21 @@ const playerNum = 1;
 let currentPlayer = 1;
 
 const nameAndScore = [
-  { name: "Aces", param: 1, type: "only" },
-  { name: "Twos", param: 2, type: "only" },
-  { name: "Threes", param: 3, type: "only" },
-  { name: "Fours", param: 4, type: "only" },
-  { name: "Fives", param: 5, type: "only" },
-  { name: "Sixes", param: 6, type: "only" },
+  { name: "Aces", type: "only", param: 1, },
+  { name: "Twos", type: "only", param: 2, },
+  { name: "Threes", type: "only", param: 3, },
+  { name: "Fours", type: "only", param: 4, },
+  { name: "Fives", type: "only", param: 5, },
+  { name: "Sixes", type: "only", param: 6, },
   { name: "Bonus", type: "bonus" },
-  { name: "Chance" },
-  { name: "Full House" },
-  { name: "3 of Kind" },
-  { name: "4 of Kind" },
-  { name: "Small Straight" },
-  { name: "Large Straight" },
-  { name: "YAHTZEE" },
-  { name: "Total" },
+  { name: "Chance", type: "sum", param: "dice" },
+  { name: "Full House", type: "ratio", param: [2, 3] },
+  { name: "3 of Kind", type: "collection", param: 3 },
+  { name: "4 of Kind", type: "collection", param: 4 },
+  { name: "Small Straight", type: "consecutive", param: 4 },
+  { name: "Large Straight", type: "consecutive", param: 5 },
+  { name: "YAHTZEE", type: "collection", param: 5 },
+  { name: "Total", type: "sum", param: "score" },
 ];
 
 const score = [];
@@ -90,6 +90,14 @@ function countContinuous(arr) {
   return res;
 }
 
+function countDiceTotal(arr) {
+  let res = 0
+  for (let i = 0; i < arr.length; i++) {
+    res += arr[i];
+  }
+  return res;
+}
+
 const diceFixed = [false, false, false, false, false];
 let diceVal = [0, 0, 0, 0, 0];
 let diceRollRemain = maxRoll;
@@ -122,19 +130,37 @@ function rollDice() {
 function calcScore() {
   const table = document.getElementById("table").childNodes;
   for (let i = 0; i < nameAndScore.length; i++) {
+    let scoreTemp;
     if (score[i][currentPlayer - 1] !== null) continue;
     if (nameAndScore[i].type === "only") {
-      table[i + 1].childNodes[currentPlayer].innerText =
-        countNum(nameAndScore[i].param, diceVal) * nameAndScore[i].param;
-    } else if (nameAndScore[i].type === "bonus") {
-      let scoreTemp = 0;
-      for (let i = minDie; i < maxDie; i++) {
-        scoreTemp += countNum(i, diceVal) * i;
+      scoreTemp = countNum(nameAndScore[i].param, diceVal) * nameAndScore[i].param;
+    }
+    else if (nameAndScore[i].type === "bonus") {
+      for (let j = minDie; j < maxDie; j++) {
+        scoreTemp += countNum(j, diceVal) * j;
       }
-    if (scoreTemp >= 63){
-      table[i + 1].childNodes[currentPlayer].innerText = 35;
+      scoreTemp = scoreTemp >= 63 ? 35 : 0;
+    } else if (nameAndScore[i].type === "sum") {
+      if (nameAndScore[i].param === "dice") {
+        scoreTemp = countDiceTotal(diceVal);
+      }
+      else if (nameAndScore[i].param === "score") {
+        for (let j = 0; j < score.length - 1; j++) {
+          scoreTemp += score[j] === null ? 0 : score[j];
+        }
+      }
+      else if (nameAndScore[i].param === "score") { }
     }
+    else if (nameAndScore[i].type === "ratio") {
+
     }
+    else if (nameAndScore[i].type === "collection") {
+
+    }
+    else if (nameAndScore[i].type === "consecutive") {
+
+    }
+    table[i + 1].childNodes[currentPlayer].innerText = scoreTemp;
   }
 }
 
