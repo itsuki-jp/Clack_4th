@@ -4,7 +4,7 @@ const diceArea = document.getElementById("diceArea");
 const minDie = 1;
 const maxDie = 6;
 const diceNum = 5;
-const maxRoll = 3;
+const maxRoll = 100;
 const playerNum = 1;
 let currentPlayer = 1;
 
@@ -26,16 +26,6 @@ const nameAndScore = [
   { name: "Total", type: "sum", param: "score" },
 ];
 
-const score = [];
-function setUpScore() {
-  for (let i = 0; i < nameAndScore.length; i++) {
-    score.push([]);
-    for (let j = 0; j < playerNum; j++) {
-      score[i].push(null);
-    }
-  }
-}
-
 function setUpTable() {
   const table = document.createElement("table");
   table.setAttribute("id", "table");
@@ -48,7 +38,7 @@ function setUpTable() {
   trHead.appendChild(trHeadName);
   for (let p = 0; p < playerNum; p++) {
     const thScore = document.createElement("th");
-    thScore.innerText = "Player1";
+    thScore.innerText = `Player${p + 1}`;
     trHead.appendChild(thScore);
   }
   for (let i = 0; i < nameAndScore.length; i++) {
@@ -58,6 +48,18 @@ function setUpTable() {
     tr.appendChild(tdName);
     for (let j = 0; j < playerNum; j++) {
       const tdScore = document.createElement("td");
+      if (i === nameAndScore.length - 1) {
+        tdScore.setAttribute('class', 'fixed');
+        tr.appendChild(tdScore);
+      }
+      else if (j === 0) {
+        tdScore.setAttribute('class', 'not_fixed');
+        tdScore.onclick = () => {
+          if (tdScore.innerText == "") return;
+          score[j][i] = tdScore.value;
+          tdScore.setAttribute('class', 'fixed');
+        }
+      }
       tr.appendChild(tdScore);
     }
     table.appendChild(tr);
@@ -98,6 +100,20 @@ function countDiceTotal(arr) {
   return res;
 }
 
+const score = [];
+function setUpScore() {
+  for (let i = 0; i < nameAndScore.length; i++) {
+    score.push([]);
+    for (let j = 0; j < playerNum; j++) {
+      score[i].push(null);
+    }
+  }
+}
+
+function nextStep(params) {
+  const table = document.getElementById("table").childNodes;
+  
+}
 const diceFixed = [false, false, false, false, false];
 let diceVal = [0, 0, 0, 0, 0];
 let diceRollRemain = maxRoll;
@@ -130,13 +146,13 @@ function rollDice() {
 function calcScore() {
   const table = document.getElementById("table").childNodes;
   for (let i = 0; i < nameAndScore.length; i++) {
-    let scoreTemp;
+    let scoreTemp = 0;
     if (score[i][currentPlayer - 1] !== null) continue;
     if (nameAndScore[i].type === "only") {
       scoreTemp = countNum(nameAndScore[i].param, diceVal) * nameAndScore[i].param;
     }
     else if (nameAndScore[i].type === "bonus") {
-      for (let j = minDie; j < maxDie; j++) {
+      for (let j = minDie; j <= maxDie; j++) {
         scoreTemp += countNum(j, diceVal) * j;
       }
       scoreTemp = scoreTemp >= 63 ? 35 : 0;
@@ -146,19 +162,43 @@ function calcScore() {
       }
       else if (nameAndScore[i].param === "score") {
         for (let j = 0; j < score.length - 1; j++) {
-          scoreTemp += score[j] === null ? 0 : score[j];
+          scoreTemp += score[j][currentPlayer - 1] == null ? 0 : score[j][currentPlayer - 1];
         }
       }
-      else if (nameAndScore[i].param === "score") { }
     }
     else if (nameAndScore[i].type === "ratio") {
-
+      let ratioArr = []
+      for (let i = minDie; i <= maxDie; i++) {
+        const val = countNum(i, diceVal);
+        if (val === 0) continue;
+        ratioArr.push(val);
+      }
+      ratioArr = ratioArr.sort((a, b) => a - b);
+      if (nameAndScore[i].param.length === ratioArr.length) {
+        let isOK = true;
+        for (let j = 0; j < ratioArr.length; j++) {
+          if (nameAndScore[i].param[j] !== ratioArr[j]) {
+            isOK = false;
+            break;
+          }
+        }
+        if (isOK) scoreTemp = 25;
+      }
     }
     else if (nameAndScore[i].type === "collection") {
-
+      let maxNum = 0;
+      for (let i = minDie; i <= maxDie; i++) {
+        let countTemp = countNum(i, diceVal);
+        maxNum = countTemp > maxNum ? countTemp : maxNum;
+      }
+      if (maxNum >= nameAndScore[i].param) scoreTemp = countDiceTotal(diceVal);
     }
     else if (nameAndScore[i].type === "consecutive") {
-
+      const temp = countContinuous(diceVal);
+      if (temp >= nameAndScore[i].param) {
+        if (nameAndScore[i].param === 4) scoreTemp = 30;
+        if (nameAndScore[i].param === 5) scoreTemp = 40;
+      }
     }
     table[i + 1].childNodes[currentPlayer].innerText = scoreTemp;
   }

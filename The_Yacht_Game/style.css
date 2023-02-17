@@ -32,3 +32,13 @@ img {
     margin-bottom: 10px;
     width: 50px;
 }
+.fixed{
+    background-color: grey;
+}
+
+.not_fixed{
+    background-color: white;
+}
+.not_fixed:hover{
+    background-color: antiquewhite;
+}
