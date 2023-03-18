@@ -1,5 +1,11 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
 #tableArea {
     width: 50%;
+    margin-top: 10px;
     margin-right: auto;
     margin-left: auto;
 }
@@ -15,7 +21,7 @@ td {
 th,
 tr,
 td {
-    font-size: 16px;
+    font-size: 15px;
     width: 50%;
     /* padding: 10px; 大きい画面の時*/
     padding: 8px;
@@ -32,13 +38,15 @@ img {
     margin-bottom: 10px;
     width: 50px;
 }
-.fixed{
+
+.fixed {
     background-color: grey;
 }
 
-.not_fixed{
+.not_fixed {
     background-color: white;
 }
-.not_fixed:hover{
+
+.not_fixed:hover {
     background-color: antiquewhite;
 }
