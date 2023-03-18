@@ -4,9 +4,14 @@ const diceArea = document.getElementById("diceArea");
 const minDie = 1;
 const maxDie = 6;
 const diceNum = 5;
-const maxRoll = 100;
+const maxRoll = 3;
 const playerNum = 1;
-let currentPlayer = 1;
+const currentPlayer = 1;
+let isScoreSelectable = false;
+
+const diceFixed = [false, false, false, false, false];
+let diceVal = [0, 0, 0, 0, 0];
+let diceRollRemain = maxRoll;
 
 const nameAndScore = [
   { name: "Aces", type: "only", param: 1, },
@@ -25,6 +30,8 @@ const nameAndScore = [
   { name: "YAHTZEE", type: "collection", param: 5 },
   { name: "Total", type: "sum", param: "score" },
 ];
+
+const score = []; // プレイヤーのスコアを入れる配列
 
 function setUpTable() {
   const table = document.createElement("table");
@@ -55,9 +62,17 @@ function setUpTable() {
       else if (j === 0) {
         tdScore.setAttribute('class', 'not_fixed');
         tdScore.onclick = () => {
-          if (tdScore.innerText == "") return;
-          score[j][i] = tdScore.value;
+          if (!isScoreSelectable) {
+            alert('ボタンを押してサイコロを回してください');
+            return;
+          }
+          score[i][j] = parseInt(tdScore.innerText);
+          console.log(score);
           tdScore.setAttribute('class', 'fixed');
+          isScoreSelectable = false;
+          diceRollRemain = maxRoll;
+          document.getElementById("rollBtn").innerText = `Remain: ${diceRollRemain}`;
+          calcScore();
         }
       }
       tr.appendChild(tdScore);
@@ -66,11 +81,9 @@ function setUpTable() {
   }
 }
 
-let arr = [2, 4, 2, 2, 2];
-let num = 1;
-countNum(1, arr);
+// サイコロに特定の数字が何個あるか数える
 function countNum(num, arr) {
-  let res = 0; // numがarrに何個あるか
+  let res = 0;
   for (let i = 0; i < arr.length; i++) {
     if (arr[i] === num) {
       res++;
@@ -79,6 +92,7 @@ function countNum(num, arr) {
   return res;
 }
 
+// 1,2,3の様に，連続した数字が何個あるか（左の例だと3）
 function countContinuous(arr) {
   let res = 0;
   const setArr = new Set(arr);
@@ -95,6 +109,7 @@ function countContinuous(arr) {
   return res;
 }
 
+// サイコロの全てを合計する
 function countDiceTotal(arr) {
   let res = 0
   for (let i = 0; i < arr.length; i++) {
@@ -103,7 +118,6 @@ function countDiceTotal(arr) {
   return res;
 }
 
-const score = [];
 function setUpScore() {
   for (let i = 0; i < nameAndScore.length; i++) {
     score.push([]);
@@ -117,9 +131,7 @@ function nextStep(params) {
   const table = document.getElementById("table").childNodes;
 
 }
-const diceFixed = [false, false, false, false, false];
-let diceVal = [0, 0, 0, 0, 0];
-let diceRollRemain = maxRoll;
+
 function setUpDice() {
   for (let i = 0; i < diceArea.childElementCount; i++) {
     diceArea.children[i].onclick = () => {
@@ -144,10 +156,13 @@ function rollDice() {
   diceRollRemain--;
   document.getElementById("rollBtn").innerText = `Remain: ${diceRollRemain}`;
   calcScore();
+  isScoreSelectable = true;
 }
-// Todo
+
 function calcScore() {
   const table = document.getElementById("table").childNodes;
+  console.log("calcScore start")
+  console.log(score);
   for (let i = 0; i < nameAndScore.length; i++) {
     let scoreTemp = 0;
     if (score[i][currentPlayer - 1] !== null) continue;
@@ -205,6 +220,8 @@ function calcScore() {
     }
     table[i + 1].childNodes[currentPlayer].innerText = scoreTemp;
   }
+  console.log("calcScore end")
+  console.log(score);
 }
 
 function main() {
