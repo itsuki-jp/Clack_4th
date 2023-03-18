@@ -1,0 +1,31 @@
+/* 隣接する線を重ねて表示 */
+.table-css {
+    border-collapse: collapse;
+}
+
+/* 上部と左側の線のみ非表示。下部と右側は残っている */
+.td-css_up {
+    border: 1px solid black;
+    border-top-style: none;
+}
+.td_css_bottom{
+    border: 1px solid black;
+    border-bottom-style: none;
+}
+.td_css_right {
+    border: 1px solid black;
+    border-right-style: none;
+}
+.td_css_left {
+    border: 1px solid black;
+    border-left-style: none;
+}
+/* 上下左右すべての線を非表示 */
+.td-css_all {
+    border-style: none;
+}
+
+/* すべての線を表示 */
+.td-css {
+    border: 1px solid black;
+}

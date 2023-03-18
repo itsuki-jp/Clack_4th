@@ -66,6 +66,9 @@ function setUpTable() {
   }
 }
 
+let arr = [2, 4, 2, 2, 2];
+let num = 1;
+countNum(1, arr);
 function countNum(num, arr) {
   let res = 0; // numがarrに何個あるか
   for (let i = 0; i < arr.length; i++) {
@@ -112,7 +115,7 @@ function setUpScore() {
 
 function nextStep(params) {
   const table = document.getElementById("table").childNodes;
-  
+
 }
 const diceFixed = [false, false, false, false, false];
 let diceVal = [0, 0, 0, 0, 0];
