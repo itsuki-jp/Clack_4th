@@ -1,0 +1,65 @@
+h1 {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 48px;
+}
+
+#dice {
+    margin-top: 50px;
+    text-align: center;
+}
+
+#dice p {
+    display: inline-block;
+    margin-right: 20px;
+    font-size: 24px;
+}
+
+#score {
+    margin-top: 50px;
+    text-align: center;
+}
+
+#score h2 {
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+table {
+    margin: 0 auto;
+}
+
+td {
+    padding: 10px;
+    border: 1px solid black;
+    text-align: center;
+    font-size: 24px;
+}
+
+td:first-child {
+    font-weight: bold;
+}
+
+button {
+    display: block;
+    margin: 0 auto;
+    margin-top: 20px;
+    padding: 10px;
+    font-size: 24px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #3E8E41;
+}
+
+#error {
+    color: red;
+    font-size: 24px;
+    text-align: center;
+    margin-top: 20px;
+}

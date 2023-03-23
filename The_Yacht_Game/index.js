@@ -8,6 +8,7 @@ const maxRoll = 3;
 const playerNum = 1;
 const currentPlayer = 1;
 let isScoreSelectable = false;
+let isDiceSelectable = false;
 
 const diceFixed = [false, false, false, false, false];
 let diceVal = [0, 0, 0, 0, 0];
@@ -66,6 +67,8 @@ function setUpTable() {
             alert('ボタンを押してサイコロを回してください');
             return;
           }
+          isDiceSelectable = false;
+          clearDice();
           score[i][j] = parseInt(tdScore.innerText);
           console.log(score);
           tdScore.setAttribute('class', 'fixed');
@@ -135,18 +138,32 @@ function nextStep(params) {
 function setUpDice() {
   for (let i = 0; i < diceArea.childElementCount; i++) {
     diceArea.children[i].onclick = () => {
+      if (!isDiceSelectable) {
+        alert("まだサイコロは選択できないです．サイコロを回してください");
+        return;
+      }
       if (diceFixed[i]) {
         diceArea.children[i].style.opacity = 1;
       } else {
         console.log("aaa");
         diceArea.children[i].style.opacity = 0.5;
       }
+      console.log(diceFixed[i]);
       diceFixed[i] = !diceFixed[i];
     };
   }
 }
+
+function clearDice() {
+  for (let i = 0; i < diceArea.childElementCount; i++) {
+    diceArea.children[i].style.opacity = 1;
+    diceFixed[i] = false;
+  }
+}
+
 function rollDice() {
   if (diceRollRemain <= 0) return;
+  isDiceSelectable = true;
   for (let i = 0; i < diceNum; i++) {
     if (diceRollRemain !== maxRoll && diceFixed[i]) continue;
     const randNum = Math.floor(Math.random() * (maxDie - minDie) + 1);
@@ -154,7 +171,7 @@ function rollDice() {
     diceVal[i] = randNum;
   }
   diceRollRemain--;
-  document.getElementById("rollBtn").innerText = `Remain: ${diceRollRemain}`;
+  document.getElementById("rollBtn").innerHTML = `Roll Dice<br>Remain: ${diceRollRemain}`;
   calcScore();
   isScoreSelectable = true;
 }
